@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		#mycanvas_container {
+			overflow: auto;
+			text-align: center;
+			height: 100%;
+			position: relative;
+			margin: auto;
+			background-color: #eee;
+		}
+	</style>
+</head>
+
+<body>
+	<img id="src_img" src="cat.jpg" width="400" />
+	<img id="dst_img" src="cat.jpg" width="400" />
+	<hr />
+	<div id="buttons"></div>
+</body>
+<script type="module">
+	import CSSFilter, { filters } from "../dist/index.esm.js";
+
+	const cssFilters = new CSSFilter();	
+
+	const source = document.getElementById('src_img');
+
+	function setFilter(name) {
+		cssFilters.clear();
+
+		cssFilters.add(name);
+		const css = cssFilters.toString();
+
+		if(css) document.getElementById('dst_img').style.filter = css;
+	}
+
+	const buttonContainer = document.getElementById('buttons');
+	function buttonClick(e) {
+		const name = this.getAttribute('data-filter');
+		setFilter(name);
+	}
+	for(const name in filters) {
+		const filter = filters[name];
+		const button = document.createElement('button');
+		button.textContent = filter.displayName || name;
+		button.setAttribute('data-filter', name);
+		button.onclick = buttonClick;
+		buttonContainer.appendChild(button);
+	}
+		
+</script>
+
+</html>
