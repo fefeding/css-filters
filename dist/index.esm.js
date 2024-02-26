@@ -28,12 +28,57 @@ class BaseFilterOption {
     }
     value;
     toString() {
-        return this.value + '';
+        return this.value.toString();
     }
     toJSON() {
         return {
             value: this.value
         };
+    }
+    clone() {
+        const obj = new BaseFilterOption();
+        // @ts-ignore
+        if (this.value && this.value.clone)
+            obj.value = this.value.clone();
+        return obj;
+    }
+}
+class ShadowFilterOptionValue {
+    constructor(data) {
+        if (data) {
+            this.x = data.x;
+            this.y = data.y;
+            this.blur = data.blur;
+            this.color = data.color;
+        }
+    }
+    x;
+    y;
+    blur;
+    color;
+    toJSON() {
+        return {
+            x: this.x,
+            y: this.y,
+            blur: this.blur || '',
+            color: this.color || ''
+        };
+    }
+    toString() {
+        return `${this.x} ${this.y} ${this.blur || 0} ${this.color || '#000'}`;
+    }
+    clone() {
+        return new ShadowFilterOptionValue(this);
+    }
+}
+class ShadowFilterOption extends BaseFilterOption {
+    constructor(option) {
+        super();
+        if (option)
+            this.value = new ShadowFilterOptionValue(option);
+    }
+    toString() {
+        return this.value.toString();
     }
 }
 
@@ -64,11 +109,12 @@ class Filter {
      * @param option 滤镜参数
      * @returns
      */
-    create(option, name = this.name, displayName = this.displayName) {
+    create(option = this.option, name = this.name, displayName = this.displayName) {
         const data = new FilterData();
         data.name = name;
         data.displayName = displayName;
-        data.option = option || this.option;
+        // @ts-ignore
+        data.option = option.clone ? option.clone() : option;
         const obj = new Filter(data);
         return obj;
     }
@@ -152,6 +198,57 @@ class HueRotateFilter extends Filter {
     name = 'hue-rotate';
     displayName = '旋转';
 }
+/**
+ * 透明度 value: 0-1
+ */
+class OpacityFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 0.8 }, option);
+        super(option);
+    }
+    name = 'opacity';
+    displayName = '透明度';
+}
+/**
+ * 阴影滤镜
+ */
+class DropShadowFilter extends Filter {
+    constructor(option) {
+        if (!option)
+            option = new ShadowFilterOption();
+        option.value = new ShadowFilterOptionValue(option.value || {
+            x: '0',
+            y: '0',
+            blur: '4px',
+            color: '#000'
+        });
+        super(option);
+    }
+    name = 'drop-shadow';
+    displayName = '阴影';
+}
+/**
+ * 对比度滤镜  value: 2
+ */
+class ContrastFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 2 }, option);
+        super(option);
+    }
+    name = 'contrast';
+    displayName = '对比度';
+}
+/**
+ * 饱和度滤镜  value: 3
+ */
+class SaturateFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 3 }, option);
+        super(option);
+    }
+    name = 'saturate';
+    displayName = '饱和度';
+}
 const filters = {
     /**
      * 反色滤镜
@@ -177,6 +274,22 @@ const filters = {
      * 旋转滤镜
      */
     hueRotate: new HueRotateFilter(),
+    /**
+     * 阴影
+     */
+    dropShadow: new DropShadowFilter(),
+    /**
+     * 透明度
+     */
+    opacity: new OpacityFilter(),
+    /**
+     * 对比度
+     */
+    contrast: new ContrastFilter(),
+    /**
+     * 饱和度
+     */
+    saturate: new SaturateFilter(),
 };
 
 class CSSFilters {
@@ -211,7 +324,7 @@ class CSSFilters {
      * 添加滤镜
      * @param filter
      */
-    add(filter) {
+    add(filter, option) {
         if (Array.isArray(filter)) {
             for (const f of filter) {
                 this.add(f);
@@ -271,4 +384,4 @@ class CSSFilters {
     }
 }
 
-export { BaseFilterOption, FilterData, CSSFilters as default, filters };
+export { BaseFilterOption, FilterData, ShadowFilterOption, ShadowFilterOptionValue, CSSFilters as default, filters };

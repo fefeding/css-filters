@@ -34,7 +34,7 @@
 	const cssFilters = new CSSFilter();	
 
 	const source = document.getElementById('src_img');
-
+	//{"name":"blur","displayName":"模糊","option":{"value":"4px"}}
 	function setFilter(name) {
 		//cssFilters.clear();
 
@@ -42,6 +42,8 @@
 		const css = cssFilters.toString();
 
 		if(css) document.getElementById('dst_img').style.filter = css;
+
+		console.log(JSON.stringify(cssFilters.toJSON()));
 	}
 
 	const buttonContainer = document.getElementById('buttons');

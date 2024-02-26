@@ -1,4 +1,4 @@
-import { IFilter, FilterData, BaseFilterOption, IBaseFilterOption } from './filterTypes';
+import { IFilter, FilterData, BaseFilterOption, IBaseFilterOption, ShadowFilterOption, ShadowFilterOptionValue } from './filterTypes';
 export declare class Filter implements IFilter {
     constructor(option?: BaseFilterOption | FilterData);
     name: string;
@@ -64,6 +64,39 @@ export declare class HueRotateFilter extends Filter {
     name: string;
     displayName?: string;
 }
+/**
+ * 透明度 value: 0-1
+ */
+export declare class OpacityFilter extends Filter {
+    constructor(option?: IBaseFilterOption);
+    name: string;
+    displayName?: string;
+}
+/**
+ * 阴影滤镜
+ */
+export declare class DropShadowFilter extends Filter {
+    constructor(option?: ShadowFilterOption);
+    name: string;
+    displayName?: string;
+    value: ShadowFilterOptionValue;
+}
+/**
+ * 对比度滤镜  value: 2
+ */
+export declare class ContrastFilter extends Filter {
+    constructor(option?: IBaseFilterOption);
+    name: string;
+    displayName?: string;
+}
+/**
+ * 饱和度滤镜  value: 3
+ */
+export declare class SaturateFilter extends Filter {
+    constructor(option?: IBaseFilterOption);
+    name: string;
+    displayName?: string;
+}
 declare const filters: {
     /**
      * 反色滤镜
@@ -89,5 +122,21 @@ declare const filters: {
      * 旋转滤镜
      */
     hueRotate: HueRotateFilter;
+    /**
+     * 阴影
+     */
+    dropShadow: DropShadowFilter;
+    /**
+     * 透明度
+     */
+    opacity: OpacityFilter;
+    /**
+     * 对比度
+     */
+    contrast: ContrastFilter;
+    /**
+     * 饱和度
+     */
+    saturate: SaturateFilter;
 };
 export default filters;

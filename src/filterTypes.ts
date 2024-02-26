@@ -18,14 +18,17 @@ export class FilterData {
     option: BaseFilterOption;
 }
 
+export interface IFilterCommon {
+    toString(): string;
+    toJSON?(): object;
+    clone?(): object;
+}
+
 export interface IBaseFilterOption {
     value?: string|number|object;
 }
 
-export interface IFilterOption extends IBaseFilterOption {
-    toString(): string;
-    toJSON?(): object;
-}
+export type IFilterOption = IBaseFilterOption & IFilterCommon ;
 
 export class BaseFilterOption implements IFilterOption {
     constructor(option?: IBaseFilterOption | string | number) {
@@ -50,22 +53,63 @@ export class BaseFilterOption implements IFilterOption {
             value: this.value
         }
     }
+
+    clone?() {
+        const obj = new BaseFilterOption();
+        // @ts-ignore
+        if(this.value && this.value.clone) obj.value = this.value.clone();
+        return obj;
+    }
+}
+
+export interface IShadowFilterOptionData {
+    x: string;
+    y: string;
+    blur: string;
+    color: string;
+}
+
+export class ShadowFilterOptionValue implements IShadowFilterOptionData, IFilterCommon {
+    constructor(data?: IShadowFilterOptionData) {
+        if(data) {
+            this.x = data.x;
+            this.y = data.y;
+            this.blur = data.blur;
+            this.color = data.color;
+        }
+    }
+    x: string;
+    y: string;
+    blur: string;
+    color: string;
+    toJSON(): IShadowFilterOptionData {
+        return {
+            x: this.x,
+            y: this.y,
+            blur: this.blur||'',
+            color: this.color||''
+        }
+    }
+    toString(): string {
+        return `${this.x} ${this.y} ${this.blur||0} ${this.color||'#000'}`; 
+    }
+
+    clone() {
+        return new ShadowFilterOptionValue(this);
+    }
 }
 
 export class ShadowFilterOption extends BaseFilterOption {
-    constructor(option?: IBaseFilterOption | string | number) {
-        super(option);
-        if(option) {
-            if(typeof option === 'string' || typeof option === 'number') {
-                this.value = option;
-            }
-            else {
-                this.value = option.value;
-            }
-        }
+    constructor(option?: IShadowFilterOptionData) {
+        super();
+        if(option) this.value = new ShadowFilterOptionValue(option);
     }
 
-    value: 
+    declare value: IShadowFilterOptionData;
+
+    toString(): string {
+        return this.value.toString();
+    }
 }
 
 /**

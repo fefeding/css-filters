@@ -1,4 +1,4 @@
-import { IFilter, FilterData, BaseFilterOption, IBaseFilterOption } from './filterTypes';
+import { IFilter, FilterData, BaseFilterOption, IBaseFilterOption, ShadowFilterOption, IShadowFilterOptionData, ShadowFilterOptionValue } from './filterTypes';
 
 
 export class Filter implements IFilter {
@@ -33,11 +33,12 @@ export class Filter implements IFilter {
       * @param option 滤镜参数
       * @returns 
       */
-     create(option?: IBaseFilterOption, name = this.name, displayName = this.displayName) {
+     create(option: IBaseFilterOption = this.option, name = this.name, displayName = this.displayName) {
         const data = new FilterData();
         data.name = name;
         data.displayName = displayName;
-        data.option = option || this.option;
+        // @ts-ignore
+        data.option = option.clone? option.clone(): option;
         const obj = new Filter(data);
         return obj;
      }
@@ -128,6 +129,64 @@ export class HueRotateFilter extends Filter {
     displayName?: string = '旋转';
 }
 
+/**
+ * 透明度 value: 0-1
+ */
+export class OpacityFilter extends Filter {
+    constructor(option?: IBaseFilterOption) {
+        option = Object.assign({ value: 0.8 }, option);
+        super(option);
+    }
+    name = 'opacity';
+    displayName?: string = '透明度';
+}
+
+/**
+ * 阴影滤镜 
+ */
+export class DropShadowFilter extends Filter {
+    constructor(option?: ShadowFilterOption) {
+        
+        if(!option) option = new ShadowFilterOption();
+
+        option.value = new ShadowFilterOptionValue(option.value || {
+            x: '0',
+            y: '0',
+            blur: '4px',
+            color: '#000'
+        });
+        super(option);
+    }
+    name = 'drop-shadow';
+    displayName?: string = '阴影';
+    declare value: ShadowFilterOptionValue;
+}
+
+/**
+ * 对比度滤镜  value: 2
+ */
+export class ContrastFilter extends Filter {
+    constructor(option?: IBaseFilterOption) {
+        option = Object.assign({ value: 2}, option);
+        super(option);
+    }
+    name = 'contrast';
+    displayName?: string = '对比度';
+}
+
+
+/**
+ * 饱和度滤镜  value: 3
+ */
+export class SaturateFilter extends Filter {
+    constructor(option?: IBaseFilterOption) {
+        option = Object.assign({ value: 3}, option);
+        super(option);
+    }
+    name = 'saturate';
+    displayName?: string = '饱和度';
+}
+
 
 const filters = {
     /**
@@ -154,6 +213,22 @@ const filters = {
      * 旋转滤镜
      */
     hueRotate: new HueRotateFilter(),
+    /**
+     * 阴影
+     */
+    dropShadow: new DropShadowFilter(),
+    /**
+     * 透明度
+     */
+    opacity: new OpacityFilter(),
+    /**
+     * 对比度
+     */
+    contrast: new ContrastFilter(),
+    /**
+     * 饱和度
+     */
+    saturate: new SaturateFilter(),
 };
 
 export default filters;

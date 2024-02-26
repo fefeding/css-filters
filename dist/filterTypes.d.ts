@@ -15,18 +15,42 @@ export declare class FilterData {
      */
     option: BaseFilterOption;
 }
-export interface IBaseFilterOption {
-    value?: string | number;
-}
-export interface IFilterOption extends IBaseFilterOption {
+export interface IFilterCommon {
     toString(): string;
     toJSON?(): object;
+    clone?(): object;
 }
+export interface IBaseFilterOption {
+    value?: string | number | object;
+}
+export type IFilterOption = IBaseFilterOption & IFilterCommon;
 export declare class BaseFilterOption implements IFilterOption {
     constructor(option?: IBaseFilterOption | string | number);
-    value?: string | number;
+    value?: string | number | object;
     toString(): string;
     toJSON?(): object;
+    clone?(): BaseFilterOption;
+}
+export interface IShadowFilterOptionData {
+    x: string;
+    y: string;
+    blur: string;
+    color: string;
+}
+export declare class ShadowFilterOptionValue implements IShadowFilterOptionData, IFilterCommon {
+    constructor(data?: IShadowFilterOptionData);
+    x: string;
+    y: string;
+    blur: string;
+    color: string;
+    toJSON(): IShadowFilterOptionData;
+    toString(): string;
+    clone(): ShadowFilterOptionValue;
+}
+export declare class ShadowFilterOption extends BaseFilterOption {
+    constructor(option?: IShadowFilterOptionData);
+    value: IShadowFilterOptionData;
+    toString(): string;
 }
 /**
  * 滤镜接口

@@ -1,4 +1,4 @@
-import { FilterType, IFilter, IFilterManager } from './filterTypes';
+import { FilterType, IFilter, IBaseFilterOption, IFilterManager } from './filterTypes';
 export default class CSSFilters implements IFilterManager {
     constructor(filters?: IFilter[]);
     filters: IFilter[];
@@ -17,7 +17,7 @@ export default class CSSFilters implements IFilterManager {
      * 添加滤镜
      * @param filter
      */
-    add(filter: FilterType | Array<FilterType>): void;
+    add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): void;
     /**
      * 移除滤镜
      * @param filter

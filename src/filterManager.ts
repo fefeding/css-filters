@@ -2,7 +2,7 @@
 import {
     FilterType,
     IFilter,
-    BaseFilterOption,
+    IBaseFilterOption,
     IFilterManager
 } from './filterTypes';
 
@@ -44,7 +44,7 @@ export default class CSSFilters implements IFilterManager {
      * 添加滤镜
      * @param filter 
      */
-    add(filter: FilterType | Array<FilterType>): void {
+    add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): void {
         if(Array.isArray(filter)) {
             for(const f of filter) {
                 this.add(f);
