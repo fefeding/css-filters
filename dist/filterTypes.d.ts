@@ -1,7 +1,7 @@
 /**
  * 滤镜数据
  */
-export interface FilterData {
+export declare class FilterData {
     /**
      * 名称
      */
@@ -15,16 +15,16 @@ export interface FilterData {
      */
     option: BaseFilterOption;
 }
-export interface IFilterOption {
+export interface IBaseFilterOption {
+    value?: string | number;
+}
+export interface IFilterOption extends IBaseFilterOption {
     toString(): string;
     toJSON?(): object;
 }
-export interface IBaseFilterOption {
-    value?: string;
-}
 export declare class BaseFilterOption implements IFilterOption {
-    constructor(option?: IBaseFilterOption);
-    value?: string;
+    constructor(option?: IBaseFilterOption | string | number);
+    value?: string | number;
     toString(): string;
     toJSON?(): object;
 }
@@ -37,6 +37,12 @@ export interface IFilter extends FilterData {
      */
     toString?(): string;
     toJSON?(): FilterData;
+    /**
+      * 创建同类型的滤镜
+      * @param option 滤镜参数
+      * @returns
+      */
+    create(option?: IBaseFilterOption, name?: string, displayName?: string): IFilter;
 }
 export type FilterType = IFilter | string;
 export interface IFilterManager {

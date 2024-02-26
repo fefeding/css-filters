@@ -2,7 +2,7 @@
 /**
  * 滤镜数据
  */
-export interface FilterData {
+export class FilterData {
     /**
      * 名称
      */
@@ -18,26 +18,31 @@ export interface FilterData {
     option: BaseFilterOption;
 }
 
-export interface IFilterOption {
+export interface IBaseFilterOption {
+    value?: string|number|object;
+}
+
+export interface IFilterOption extends IBaseFilterOption {
     toString(): string;
     toJSON?(): object;
 }
 
-export interface IBaseFilterOption {
-    value?: string;
-}
-
 export class BaseFilterOption implements IFilterOption {
-    constructor(option?: IBaseFilterOption) {
+    constructor(option?: IBaseFilterOption | string | number) {
         if(option) {
-            this.value = option.value;
+            if(typeof option === 'string' || typeof option === 'number') {
+                this.value = option;
+            }
+            else {
+                this.value = option.value;
+            }
         }
     }
 
-    value?: string;
+    value?: string|number|object;
 
     toString(): string {
-        return this.value;
+        return this.value.toString();
     }
 
     toJSON?(): object {
@@ -45,6 +50,22 @@ export class BaseFilterOption implements IFilterOption {
             value: this.value
         }
     }
+}
+
+export class ShadowFilterOption extends BaseFilterOption {
+    constructor(option?: IBaseFilterOption | string | number) {
+        super(option);
+        if(option) {
+            if(typeof option === 'string' || typeof option === 'number') {
+                this.value = option;
+            }
+            else {
+                this.value = option.value;
+            }
+        }
+    }
+
+    value: 
 }
 
 /**
@@ -59,6 +80,13 @@ export interface IFilter extends FilterData {
 
     // 转成json
     toJSON?(): FilterData;
+
+    /**
+      * 创建同类型的滤镜
+      * @param option 滤镜参数
+      * @returns 
+      */
+    create(option?: IBaseFilterOption, name?: string, displayName?: string): IFilter;
 }
 
 export type FilterType = IFilter | string;

@@ -1,12 +1,34 @@
+/**
+ * 滤镜数据
+ */
+class FilterData {
+    /**
+     * 名称
+     */
+    name;
+    /**
+     * 中文名
+     */
+    displayName;
+    /**
+     * 配置值
+     */
+    option;
+}
 class BaseFilterOption {
     constructor(option) {
         if (option) {
-            this.value = option.value;
+            if (typeof option === 'string' || typeof option === 'number') {
+                this.value = option;
+            }
+            else {
+                this.value = option.value;
+            }
         }
     }
     value;
     toString() {
-        return this.value;
+        return this.value + '';
     }
     toJSON() {
         return {
@@ -18,20 +40,16 @@ class BaseFilterOption {
 class Filter {
     constructor(option) {
         if (option) {
+            if (option instanceof FilterData) {
+                this.name = option.name;
+                this.displayName = option.displayName;
+                option = option.option;
+            }
             if (option instanceof BaseFilterOption) {
                 this.option = option;
             }
-            else {
-                this.name = option.name;
-                this.displayName = option.displayName;
-                if (option.option) {
-                    if (option.option instanceof BaseFilterOption) {
-                        this.option = option.option;
-                    }
-                    else {
-                        this.option = new BaseFilterOption(option.option);
-                    }
-                }
+            else if (typeof option === 'object') {
+                this.option = new BaseFilterOption(option);
             }
         }
     }
@@ -41,6 +59,19 @@ class Filter {
     * 配置值
     */
     option;
+    /**
+     * 创建同类型的滤镜
+     * @param option 滤镜参数
+     * @returns
+     */
+    create(option, name = this.name, displayName = this.displayName) {
+        const data = new FilterData();
+        data.name = name;
+        data.displayName = displayName;
+        data.option = option || this.option;
+        const obj = new Filter(data);
+        return obj;
+    }
     // 转成json
     toJSON() {
         return {
@@ -55,10 +86,97 @@ class Filter {
         return `${this.name}(${this.option.toString()})`;
     }
 }
+/**
+ * 反色滤镜
+ */
+class InvertFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 1 }, option);
+        super(option);
+    }
+    name = 'invert';
+    displayName = '反色';
+}
+/**
+ * 模糊滤镜 value: 4px
+ */
+class BlurFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: '4px' }, option);
+        super(option);
+    }
+    name = 'blur';
+    displayName = '模糊';
+}
+/**
+ * 亮度滤镜 value: 0-100
+ */
+class BrightnessFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 2 }, option);
+        super(option);
+    }
+    name = 'brightness';
+    displayName = '亮度';
+}
+/**
+ * 灰度滤镜 value: 0-1
+ */
+class GrayscaleFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 1 }, option);
+        super(option);
+    }
+    name = 'grayscale';
+    displayName = '灰度';
+}
+/**
+ * 复古滤镜 value: 0-1
+ */
+class SepiaFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: 1 }, option);
+        super(option);
+    }
+    name = 'sepia';
+    displayName = '复古';
+}
+/**
+ * 旋转滤镜 value: 0-360deg 角度 或 弧度 0-2*Math.PI rad
+ */
+class HueRotateFilter extends Filter {
+    constructor(option) {
+        option = Object.assign({ value: '240deg' }, option);
+        super(option);
+    }
+    name = 'hue-rotate';
+    displayName = '旋转';
+}
 const filters = {
-    InvertFilter: new Filter({
-        value: '1'
-    }),
+    /**
+     * 反色滤镜
+     */
+    invert: new InvertFilter(),
+    /**
+     * 亮度
+     */
+    blur: new BlurFilter(),
+    /**
+     * 亮度
+     */
+    brightness: new BrightnessFilter(),
+    /**
+     * 灰度
+     */
+    grayscale: new GrayscaleFilter(),
+    /**
+     * 复古
+     */
+    sepia: new SepiaFilter(),
+    /**
+     * 旋转滤镜
+     */
+    hueRotate: new HueRotateFilter(),
 };
 
 class CSSFilters {
@@ -153,4 +271,4 @@ class CSSFilters {
     }
 }
 
-export { BaseFilterOption, CSSFilters as default, filters };
+export { BaseFilterOption, FilterData, CSSFilters as default, filters };
