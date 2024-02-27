@@ -170,7 +170,7 @@ export interface IFilterManager {
      * 加入滤镜
      * @param filter 
      */
-    add(filter: FilterType | Array<FilterType>): void;
+    add(filter: FilterType | Array<FilterType>): IFilter | undefined;
 
     /**
      * 移除滤镜

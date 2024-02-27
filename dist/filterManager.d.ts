@@ -23,7 +23,7 @@ export default class CSSFilters implements IFilterManager {
      * 添加滤镜
      * @param filter
      */
-    add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): void;
+    add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): IFilter | undefined;
     /**
      * 移除滤镜
      * @param filter

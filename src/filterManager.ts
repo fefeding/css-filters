@@ -54,7 +54,7 @@ export default class CSSFilters implements IFilterManager {
      * 添加滤镜
      * @param filter 
      */
-    add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): void {
+    add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): IFilter | undefined {
         if(Array.isArray(filter)) {
             for(const f of filter) {
                 this.add(f, option);
@@ -74,15 +74,15 @@ export default class CSSFilters implements IFilterManager {
         if(filter.name) {
             const existsFilter = this.get(filter.name);
             if(existsFilter) {
-                console.error(`${filter.name}已经存在滤镜集合中，不能重复`);  
-                return;
+                console.error(`${filter.displayName || filter.name}已经存在滤镜集合中，不能重复`);  
+                return existsFilter;
             }
         }
 
         if(filter instanceof Filter) {
             this.filters.push(filter);
             this.apply();
-            return;
+            return filter;
         }       
        else if(filter.name) {
         return this.add(filter.name, filter.option);
