@@ -48,7 +48,7 @@ export declare class ShadowFilterOptionValue implements IShadowFilterOptionData,
     clone(): ShadowFilterOptionValue;
 }
 export declare class ShadowFilterOption extends BaseFilterOption {
-    constructor(option?: IShadowFilterOptionData);
+    constructor(option?: IShadowFilterOptionData | ShadowFilterOption);
     value: IShadowFilterOptionData;
     toString(): string;
 }
@@ -68,12 +68,18 @@ export interface IFilter extends FilterData {
       */
     create(option?: IBaseFilterOption, name?: string, displayName?: string): IFilter;
 }
-export type FilterType = IFilter | string;
+export type FilterType = IFilter | FilterData | string;
 export interface IFilterManager {
     /**
      * 所有滤镜
      */
     filters: Array<IFilter>;
+    /**
+     * 绑定的dom否元素对象
+     */
+    target?: {
+        style: any;
+    };
     /**
      * 根据滤镜名获取滤镜对象
      * @param name
@@ -103,4 +109,9 @@ export interface IFilterManager {
      * 转成css
      */
     toString(): string;
+    /**
+     * 生效
+     * @param target
+     */
+    apply(target?: any): void;
 }

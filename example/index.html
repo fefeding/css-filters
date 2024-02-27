@@ -31,20 +31,21 @@
 <script type="module">
 	import CSSFilter, { filters } from "../dist/index.esm.js";
 
-	const cssFilters = new CSSFilter();	
+	const dst = document.getElementById('dst_img');
+	const cssFilters = new CSSFilter(dst);	
 
-	const source = document.getElementById('src_img');
-	//{"name":"blur","displayName":"模糊","option":{"value":"4px"}}
 	function setFilter(name) {
 		//cssFilters.clear();
 
 		cssFilters.add(name);
-		const css = cssFilters.toString();
-
-		if(css) document.getElementById('dst_img').style.filter = css;
 
 		console.log(JSON.stringify(cssFilters.toJSON()));
 	}
+	// 默认指定
+	setFilter([
+		{"name":"blur","displayName":"模糊","option":{"value":"2px"}},
+		{"name":"grayscale","displayName":"灰度","option":{"value": 0.5}}
+	]);
 
 	const buttonContainer = document.getElementById('buttons');
 	function buttonClick(e) {

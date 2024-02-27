@@ -12,7 +12,7 @@ export declare class Filter implements IFilter {
      * @param option 滤镜参数
      * @returns
      */
-    create(option?: IBaseFilterOption, name?: string, displayName?: string): Filter;
+    create(option?: IBaseFilterOption, name?: string, displayName?: string, filterType?: typeof Filter): Filter;
     toJSON(): FilterData;
     toString(): string;
 }
@@ -80,6 +80,12 @@ export declare class DropShadowFilter extends Filter {
     name: string;
     displayName?: string;
     value: ShadowFilterOptionValue;
+    /**
+      * 创建同类型的滤镜
+      * @param option 滤镜参数
+      * @returns
+      */
+    create(option?: ShadowFilterOption, name?: string, displayName?: string): DropShadowFilter;
 }
 /**
  * 对比度滤镜  value: 2

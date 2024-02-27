@@ -40,6 +40,8 @@ class BaseFilterOption {
         // @ts-ignore
         if (this.value && this.value.clone)
             obj.value = this.value.clone();
+        else
+            obj.value = this.value;
         return obj;
     }
 }
@@ -74,8 +76,13 @@ class ShadowFilterOptionValue {
 class ShadowFilterOption extends BaseFilterOption {
     constructor(option) {
         super();
-        if (option)
-            this.value = new ShadowFilterOptionValue(option);
+        if (option) {
+            // @ts-ignore
+            if (option instanceof ShadowFilterOption || option.value)
+                this.value = new ShadowFilterOptionValue(option.value);
+            else
+                this.value = new ShadowFilterOptionValue(option);
+        }
     }
     toString() {
         return this.value.toString();
@@ -109,13 +116,13 @@ class Filter {
      * @param option 滤镜参数
      * @returns
      */
-    create(option = this.option, name = this.name, displayName = this.displayName) {
+    create(option = this.option, name = this.name, displayName = this.displayName, filterType = Filter) {
         const data = new FilterData();
         data.name = name;
         data.displayName = displayName;
         // @ts-ignore
         data.option = option.clone ? option.clone() : option;
-        const obj = new Filter(data);
+        const obj = new filterType(data);
         return obj;
     }
     // 转成json
@@ -226,6 +233,18 @@ class DropShadowFilter extends Filter {
     }
     name = 'drop-shadow';
     displayName = '阴影';
+    /**
+      * 创建同类型的滤镜
+      * @param option 滤镜参数
+      * @returns
+      */
+    create(option = this.option, name = this.name, displayName = this.displayName) {
+        const data = new ShadowFilterOption(option);
+        const obj = new DropShadowFilter(data);
+        obj.name = name;
+        obj.displayName = displayName;
+        return obj;
+    }
 }
 /**
  * 对比度滤镜  value: 2
@@ -293,13 +312,19 @@ const filters = {
 };
 
 class CSSFilters {
-    constructor(filters) {
+    constructor(target, filters) {
         if (filters && filters.length) {
             this.filters.push(...filters);
         }
+        if (target)
+            this.target = target;
     }
     // 所有支持的滤镜
     filters = new Array();
+    /**
+     * 绑定的dom否元素对象
+     */
+    target;
     /**
      * 当前滤镜个数
      */
@@ -327,7 +352,7 @@ class CSSFilters {
     add(filter, option) {
         if (Array.isArray(filter)) {
             for (const f of filter) {
-                this.add(f);
+                this.add(f, option);
             }
             return;
         }
@@ -335,15 +360,26 @@ class CSSFilters {
             const filterObj = filters[filter];
             if (!filterObj) {
                 console.error(`${filter}不存在`);
+                return;
             }
-            return this.add(filterObj);
+            filter = filterObj.create(option || filterObj.option);
+            return this.add(filter);
         }
-        const existsFilter = this.get(filter.name);
-        if (existsFilter) {
-            console.error(`${filter.name}已经存在滤镜集合中，不能重复`);
+        if (filter.name) {
+            const existsFilter = this.get(filter.name);
+            if (existsFilter) {
+                console.error(`${filter.name}已经存在滤镜集合中，不能重复`);
+                return;
+            }
+        }
+        if (filter instanceof Filter) {
+            this.filters.push(filter);
+            this.apply();
             return;
         }
-        this.filters.push(filter);
+        else if (filter.name) {
+            return this.add(filter.name, filter.option);
+        }
     }
     /**
      * 移除滤镜
@@ -361,6 +397,7 @@ class CSSFilters {
                 }
             }
         }
+        this.apply();
     }
     toJSON() {
         const res = [];
@@ -381,6 +418,14 @@ class CSSFilters {
         if (res.length)
             return res.join(' ');
         return '';
+    }
+    /**
+     * 生效
+     * @param target
+     */
+    apply(target = this.target) {
+        if (target && target.style)
+            target.style.filter = this.toString();
     }
 }
 

@@ -1,7 +1,13 @@
 import { FilterType, IFilter, IBaseFilterOption, IFilterManager } from './filterTypes';
 export default class CSSFilters implements IFilterManager {
-    constructor(filters?: IFilter[]);
+    constructor(target?: any, filters?: IFilter[]);
     filters: IFilter[];
+    /**
+     * 绑定的dom否元素对象
+     */
+    target?: {
+        style: any;
+    };
     /**
      * 当前滤镜个数
      */
@@ -25,4 +31,11 @@ export default class CSSFilters implements IFilterManager {
     remove(filter: FilterType | Array<FilterType>): void;
     toJSON(): IFilter[];
     toString(): string;
+    /**
+     * 生效
+     * @param target
+     */
+    apply(target?: {
+        style: any;
+    }): void;
 }

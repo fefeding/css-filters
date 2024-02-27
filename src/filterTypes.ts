@@ -58,6 +58,8 @@ export class BaseFilterOption implements IFilterOption {
         const obj = new BaseFilterOption();
         // @ts-ignore
         if(this.value && this.value.clone) obj.value = this.value.clone();
+        else obj.value = this.value;
+
         return obj;
     }
 }
@@ -100,9 +102,13 @@ export class ShadowFilterOptionValue implements IShadowFilterOptionData, IFilter
 }
 
 export class ShadowFilterOption extends BaseFilterOption {
-    constructor(option?: IShadowFilterOptionData) {
+    constructor(option?: IShadowFilterOptionData | ShadowFilterOption) {
         super();
-        if(option) this.value = new ShadowFilterOptionValue(option);
+        if(option) {
+            // @ts-ignore
+            if(option instanceof ShadowFilterOption || option.value) this.value = new ShadowFilterOptionValue(option.value);
+            else this.value = new ShadowFilterOptionValue(option);
+        }
     }
 
     declare value: IShadowFilterOptionData;
@@ -133,13 +139,20 @@ export interface IFilter extends FilterData {
     create(option?: IBaseFilterOption, name?: string, displayName?: string): IFilter;
 }
 
-export type FilterType = IFilter | string;
+export type FilterType = IFilter | FilterData | string;
 
 export interface IFilterManager {
     /**
      * 所有滤镜
      */
     filters: Array<IFilter>;
+    
+    /**
+     * 绑定的dom否元素对象
+     */
+    target?: {
+        style: any
+    };
 
     /**
      * 根据滤镜名获取滤镜对象
@@ -177,4 +190,10 @@ export interface IFilterManager {
      * 转成css
      */
     toString(): string;
+
+    /**
+     * 生效
+     * @param target  
+     */
+    apply(target?: any): void;
 }

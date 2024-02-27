@@ -6,17 +6,25 @@ import {
     IFilterManager
 } from './filterTypes';
 
-import cssFilters from './filters';
+import cssFilters, { Filter } from './filters';
 
 export default class CSSFilters implements IFilterManager {
-    constructor(filters?: IFilter[]) {
+    constructor(target?: any, filters?: IFilter[]) {
         if(filters && filters.length) {
             this.filters.push(...filters);
         }
+        if(target) this.target = target;
     }
 
     // 所有支持的滤镜
     filters = new Array<IFilter>();
+
+    /**
+     * 绑定的dom否元素对象
+     */
+    target?: {
+        style: any
+    };
 
     /**
      * 当前滤镜个数
@@ -47,23 +55,36 @@ export default class CSSFilters implements IFilterManager {
     add(filter: FilterType | Array<FilterType>, option?: IBaseFilterOption): void {
         if(Array.isArray(filter)) {
             for(const f of filter) {
-                this.add(f);
+                this.add(f, option);
             }
             return;
         }
         else if(typeof filter === 'string') {
             const filterObj = cssFilters[filter];
             if(!filterObj) {
-                console.error(`${filter}不存在`);                
+                console.error(`${filter}不存在`);  
+                return;              
             }
-            return this.add(filterObj);
+            filter = filterObj.create(option || filterObj.option);
+            return this.add(filter);
         }
-       const existsFilter = this.get(filter.name);
-       if(existsFilter) {
-        console.error(`${filter.name}已经存在滤镜集合中，不能重复`);  
-        return;
+
+        if(filter.name) {
+            const existsFilter = this.get(filter.name);
+            if(existsFilter) {
+                console.error(`${filter.name}已经存在滤镜集合中，不能重复`);  
+                return;
+            }
+        }
+
+        if(filter instanceof Filter) {
+            this.filters.push(filter);
+            this.apply();
+            return;
+        }       
+       else if(filter.name) {
+        return this.add(filter.name, filter.option);
        }
-       this.filters.push(filter); 
     }
 
     /**
@@ -81,6 +102,8 @@ export default class CSSFilters implements IFilterManager {
                 }
             }
         }
+
+        this.apply();
     }
 
     toJSON(): IFilter[] {
@@ -101,5 +124,13 @@ export default class CSSFilters implements IFilterManager {
         }
         if(res.length) return res.join(' ');
         return '';
+    }
+
+    /**
+     * 生效
+     * @param target  
+     */
+    apply(target = this.target) {
+        if(target && target.style) target.style.filter = this.toString();
     }
 }
