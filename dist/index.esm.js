@@ -313,11 +313,11 @@ const filters = {
 
 class CSSFilters {
     constructor(target, filters) {
-        if (filters && filters.length) {
-            this.filters.push(...filters);
-        }
         if (target)
             this.target = target;
+        if (filters && filters.length) {
+            this.add(filters);
+        }
     }
     // 所有支持的滤镜
     filters = new Array();

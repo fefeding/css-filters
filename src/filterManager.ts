@@ -10,10 +10,12 @@ import cssFilters, { Filter } from './filters';
 
 export default class CSSFilters implements IFilterManager {
     constructor(target?: any, filters?: IFilter[]) {
-        if(filters && filters.length) {
-            this.filters.push(...filters);
-        }
+
         if(target) this.target = target;
+
+        if(filters && filters.length) {
+            this.add(filters);
+        }
     }
 
     // 所有支持的滤镜
