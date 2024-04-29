@@ -429,4 +429,4 @@ class CSSFilters {
     }
 }
 
-export { BaseFilterOption, FilterData, ShadowFilterOption, ShadowFilterOptionValue, CSSFilters as default, filters };
+export { BaseFilterOption, BlurFilter, BrightnessFilter, ContrastFilter, DropShadowFilter, Filter, FilterData, GrayscaleFilter, HueRotateFilter, InvertFilter, OpacityFilter, SaturateFilter, SepiaFilter, ShadowFilterOption, ShadowFilterOptionValue, CSSFilters as default, filters };
