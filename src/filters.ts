@@ -84,7 +84,7 @@ export class BlurFilter extends Filter {
 
 
 /**
- * 亮度滤镜 value: 0-100
+ * 亮度滤镜 value: 0-1
  */
 export class BrightnessFilter extends Filter {
     constructor(option?: IBaseFilterOption) {
@@ -207,19 +207,19 @@ const filters = {
      */
     invert: new InvertFilter(),
     /**
-     * 亮度
+     * 模糊滤镜 value: 4px
      */
     blur: new BlurFilter(),
     /**
-     * 亮度
+     * 亮度滤镜 value: 0-1
      */
     brightness: new BrightnessFilter(),
     /**
-     * 灰度
+     * 灰度滤镜 value: 0-1
      */
     grayscale: new GrayscaleFilter(),
     /**
-     * 复古
+     * 复古滤镜 value: 0-1
      */
     sepia: new SepiaFilter(),
     /**
