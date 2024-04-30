@@ -189,7 +189,7 @@ export class ContrastFilter extends Filter {
 
 
 /**
- * 饱和度滤镜  value: 3
+ * 饱和度 0-无穷 ,一般取0-1
  */
 export class SaturateFilter extends Filter {
     constructor(option?: IBaseFilterOption) {
@@ -239,7 +239,7 @@ const filters = {
      */
     contrast: new ContrastFilter(),
     /**
-     * 饱和度
+     * 饱和度 0-无穷 ,一般取0-1
      */
     saturate: new SaturateFilter(),
 };
