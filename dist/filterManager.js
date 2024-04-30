@@ -1,4 +1,4 @@
-import cssFilters, { Filter } from './filters';
+import { Filter, get as getFilter } from './filters';
 export default class CSSFilters {
     constructor(target, filters) {
         if (target)
@@ -45,7 +45,7 @@ export default class CSSFilters {
             return;
         }
         else if (typeof filter === 'string') {
-            const filterObj = cssFilters[filter];
+            const filterObj = getFilter(filter);
             if (!filterObj) {
                 console.error(`${filter}不存在`);
                 return;

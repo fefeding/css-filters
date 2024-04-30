@@ -6,7 +6,7 @@ import {
     IFilterManager
 } from './filterTypes';
 
-import cssFilters, { Filter } from './filters';
+import cssFilters, { Filter, get as getFilter } from './filters';
 
 export default class CSSFilters implements IFilterManager {
     constructor(target?: any, filters?: IFilter[]) {
@@ -62,7 +62,7 @@ export default class CSSFilters implements IFilterManager {
             return;
         }
         else if(typeof filter === 'string') {
-            const filterObj = cssFilters[filter];
+            const filterObj = getFilter(filter);
             if(!filterObj) {
                 console.error(`${filter}不存在`);  
                 return;              

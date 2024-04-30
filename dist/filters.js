@@ -72,7 +72,7 @@ export class BlurFilter extends Filter {
     displayName = '模糊';
 }
 /**
- * 亮度滤镜 value: 0-100
+ * 亮度滤镜 value: 0-1
  */
 export class BrightnessFilter extends Filter {
     constructor(option) {
@@ -168,7 +168,7 @@ export class ContrastFilter extends Filter {
     displayName = '对比度';
 }
 /**
- * 饱和度滤镜  value: 3
+ * 饱和度 0-无穷 ,一般取0-1
  */
 export class SaturateFilter extends Filter {
     constructor(option) {
@@ -184,19 +184,19 @@ const filters = {
      */
     invert: new InvertFilter(),
     /**
-     * 亮度
+     * 模糊滤镜 value: 4px
      */
     blur: new BlurFilter(),
     /**
-     * 亮度
+     * 亮度滤镜 value: 0-1
      */
     brightness: new BrightnessFilter(),
     /**
-     * 灰度
+     * 灰度滤镜 value: 0-1
      */
     grayscale: new GrayscaleFilter(),
     /**
-     * 复古
+     * 复古滤镜 value: 0-1
      */
     sepia: new SepiaFilter(),
     /**
@@ -216,8 +216,22 @@ const filters = {
      */
     contrast: new ContrastFilter(),
     /**
-     * 饱和度
+     * 饱和度 0-无穷 ,一般取0-1
      */
     saturate: new SaturateFilter(),
 };
+// 获取fiter实例对象
+export function get(name) {
+    if (!name)
+        return null;
+    if (filters[name])
+        return filters[name];
+    for (const key in filters) {
+        const filter = filters[key];
+        if (filter instanceof Filter && filter.name === name) {
+            return filter;
+        }
+    }
+    return null;
+}
 export default filters;

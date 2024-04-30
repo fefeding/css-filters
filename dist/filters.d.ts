@@ -33,7 +33,7 @@ export declare class BlurFilter extends Filter {
     displayName?: string;
 }
 /**
- * 亮度滤镜 value: 0-100
+ * 亮度滤镜 value: 0-1
  */
 export declare class BrightnessFilter extends Filter {
     constructor(option?: IBaseFilterOption);
@@ -96,7 +96,7 @@ export declare class ContrastFilter extends Filter {
     displayName?: string;
 }
 /**
- * 饱和度滤镜  value: 3
+ * 饱和度 0-无穷 ,一般取0-1
  */
 export declare class SaturateFilter extends Filter {
     constructor(option?: IBaseFilterOption);
@@ -109,19 +109,19 @@ declare const filters: {
      */
     invert: InvertFilter;
     /**
-     * 亮度
+     * 模糊滤镜 value: 4px
      */
     blur: BlurFilter;
     /**
-     * 亮度
+     * 亮度滤镜 value: 0-1
      */
     brightness: BrightnessFilter;
     /**
-     * 灰度
+     * 灰度滤镜 value: 0-1
      */
     grayscale: GrayscaleFilter;
     /**
-     * 复古
+     * 复古滤镜 value: 0-1
      */
     sepia: SepiaFilter;
     /**
@@ -141,8 +141,9 @@ declare const filters: {
      */
     contrast: ContrastFilter;
     /**
-     * 饱和度
+     * 饱和度 0-无穷 ,一般取0-1
      */
     saturate: SaturateFilter;
 };
+export declare function get(name: string): any;
 export default filters;

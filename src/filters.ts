@@ -244,4 +244,17 @@ const filters = {
     saturate: new SaturateFilter(),
 };
 
+// 获取fiter实例对象
+export function get(name: string) {
+    if(!name) return null;
+    if(filters[name]) return filters[name];
+    for(const key in filters) {
+        const filter = filters[key];        
+        if(filter instanceof Filter && filter.name === name) {
+            return filter;
+        }
+    }
+    return null;
+}
+
 export default filters;
