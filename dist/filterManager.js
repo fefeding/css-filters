@@ -53,13 +53,13 @@ export default class CSSFilters {
             filter = filterObj.create(option || filterObj.option);
             return this.add(filter);
         }
-        if (filter.name) {
+        /*if(filter.name) {
             const existsFilter = this.get(filter.name);
-            if (existsFilter) {
+            if(existsFilter) {
                 console.error(`${filter.displayName || filter.name}已经存在滤镜集合中，不能重复`);
                 return existsFilter;
             }
-        }
+        }*/
         if (filter instanceof Filter) {
             this.filters.push(filter);
             this.apply();
