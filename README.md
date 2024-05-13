@@ -2,7 +2,7 @@
 css滤镜
 
 ```bash
-npm i j-css-filters
+npm i @fefeding/css-filters
 ```
 
 # example

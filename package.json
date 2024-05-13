@@ -1,5 +1,5 @@
 {
-  "name": "j-css-filters",
+  "name": "@fefeding/css-filters",
   "version": "1.0.7",
   "description": "css滤镜",
   "main": "./dist/index.js",
@@ -7,6 +7,10 @@
   "files": [
     "dist/"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "dev": "node test/dev",
     "build": "gulp && node ./build/build.js && npm run docs:build",
